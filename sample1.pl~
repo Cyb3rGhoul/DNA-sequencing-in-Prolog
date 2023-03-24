@@ -1,0 +1,37 @@
+
+contains_sequence(DNA, Sequence) :-
+    sub_string(DNA, _, _, _, Sequence).
+
+% DNA pattern is represented as a list of characters
+dna_pattern([A, T, G, C]) :-
+    member(A, [a, t, g, c]),
+    member(T, [a, t, g, c]),
+    member(G, [a, t, g, c]),
+    member(C, [a, t, g, c]).
+
+% Extract DNA patterns from a string
+extract_patterns(String, Patterns) :-
+    string_chars(String, Chars),
+    findall(Pattern, (prefix(Chars, Prefix), suffix(Prefix, Pattern), dna_pattern(Pattern)), Patterns).
+
+% Get all prefixes of a list
+prefix([], []).
+prefix([H|T], [H|Prefix]) :- prefix(T, Prefix).
+
+% Get all suffixes of a list
+suffix(List, Suffix) :- append(_, Suffix, List).
+
+%Finding the pattern of DNA.
+find_pattern(Pattern, Triplets) :-
+    member(Pattern, Triplets).
+
+    % Find all substrings of the given string that match the given pattern
+match_pattern(String, Length, Pattern, Match) :-
+    sub_string(String, _, Length, _, Pattern),
+    Start = 0, % Initialize the Start variable
+    sub_string(String, Start, Length, _, Match),
+    sub_string(Pattern, 0, Length, _, Match).
+
+% Find all patterns of the given length in the given string
+find_patterns(String, Length, Patterns) :-
+    findall(Pattern, match_pattern(String, Length, Pattern, _), Patterns).
